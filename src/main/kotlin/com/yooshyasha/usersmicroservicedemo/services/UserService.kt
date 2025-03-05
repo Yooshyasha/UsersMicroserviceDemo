@@ -26,6 +26,6 @@ class UserService(
     }
 
     fun getUserByUsername(username: String): User? {
-        return userRepo.findByUsername(username)
+        return userRepo.findByUserName(username)
     }
 }
