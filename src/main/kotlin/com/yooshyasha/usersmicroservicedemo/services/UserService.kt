@@ -24,4 +24,8 @@ class UserService(
     fun getUserById(userId: UUID): Optional<User> {
         return userRepo.findById(userId)
     }
+
+    fun getUserByUsername(username: String): User? {
+        return userRepo.findByUsername(username)
+    }
 }
