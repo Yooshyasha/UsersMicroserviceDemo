@@ -28,4 +28,8 @@ class UserService(
     fun getUserByUsername(username: String): User? {
         return userRepo.findByUserName(username)
     }
+
+    fun existsByUsername(username: String): Boolean {
+        return userRepo.existsByUsername(username)
+    }
 }
