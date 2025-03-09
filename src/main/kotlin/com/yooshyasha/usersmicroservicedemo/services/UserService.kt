@@ -30,6 +30,6 @@ class UserService(
     }
 
     fun existsByUsername(username: String): Boolean {
-        return userRepo.existsByUsername(username)
+        return userRepo.existsByUserName(username)
     }
 }

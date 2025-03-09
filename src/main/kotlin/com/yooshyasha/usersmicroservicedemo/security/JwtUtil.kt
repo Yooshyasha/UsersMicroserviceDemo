@@ -12,7 +12,10 @@ import java.util.*
 class JwtUtil(
     private val userService: UserService,
 ) {
-    private final val SECRET = Keys.hmacShaKeyFor(Base64.getDecoder().decode("1k3A36gt4CmWN6b+wFfY3Q=="))
+    private final val SECRET = Keys.hmacShaKeyFor(
+        Base64.getDecoder()
+            .decode("HchXPor/fZ0G6nYLCGSq0oNTjGzJrF7DCVvjNvKiPgO4blCnss54b5Gpgw7T5L31RYvKaz3t67fFWxrDecm44A==")
+    )
     private final val TOKEN_LIFETIME = 60 * 60 * 60 * 24
 
     fun extractUsernameFromToken(token: String): String? {
