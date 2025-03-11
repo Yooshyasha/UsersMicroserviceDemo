@@ -41,4 +41,10 @@ class JwtUtil(
             .issuedAt(now)
             .compact()
     }
+
+    fun verifyToken(token: String, userDetails: UserDetails): Boolean {
+        val claims = extractAllClaimsFromToken(token)
+
+        return claims.subject != userDetails.username && !claims.expiration.before(Date())
+    }
 }

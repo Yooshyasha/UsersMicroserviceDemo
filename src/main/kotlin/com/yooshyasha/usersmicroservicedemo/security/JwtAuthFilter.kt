@@ -30,8 +30,9 @@ class JwtAuthFilter(
                 ?: return filterChain.doFilter(request, response)
 
             val user = userService.getUserByUsername(username)
+                ?: return filterChain.doFilter(request, response)
 
-            if (user != null) {
+            if (jwtUtil.verifyToken(token, user)) {
                 val auth = UsernamePasswordAuthenticationToken(user, null, user.authorities)
 
                 auth.details = WebAuthenticationDetailsSource().buildDetails(request)
