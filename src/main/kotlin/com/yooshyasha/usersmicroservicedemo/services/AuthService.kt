@@ -40,4 +40,20 @@ class AuthService(
 
         return jwtUtil.generateToken(user)
     }
+
+    fun loginWithRefreshToken(token: String): String {
+        val username = jwtUtil.extractUsernameFromToken(token)
+        val user = userService.getUserByUsername(username!!)
+            ?: throw UsernameNotFoundException("Username $username not found")
+
+        return jwtUtil.generateToken(user)
+    }
+
+    fun generateRefreshToken(token: String): String {
+        val username = jwtUtil.extractUsernameFromToken(token)
+        val user = userService.getUserByUsername(username!!)
+            ?: throw UsernameNotFoundException("Username $username not found")
+
+        return jwtUtil.generateToken(user, true)
+    }
 }

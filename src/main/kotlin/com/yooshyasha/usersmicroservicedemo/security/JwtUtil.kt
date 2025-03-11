@@ -16,7 +16,7 @@ class JwtUtil(
         Base64.getDecoder()
             .decode("HchXPor/fZ0G6nYLCGSq0oNTjGzJrF7DCVvjNvKiPgO4blCnss54b5Gpgw7T5L31RYvKaz3t67fFWxrDecm44A==")
     )
-    private final val TOKEN_LIFETIME = 60 * 60 * 60 * 24
+    private final val TOKEN_LIFETIME = 1000 * 60 * 60 * 24
 
     fun extractUsernameFromToken(token: String): String? {
         return extractAllClaimsFromToken(token).subject
@@ -30,12 +30,15 @@ class JwtUtil(
             .payload
     }
 
-    fun generateToken(userDetails: UserDetails): String {
+    fun generateToken(userDetails: UserDetails, isRefreshToken: Boolean = false): String {
+        val now = Date()
+        val expiration = Date(now.time + if (isRefreshToken) TOKEN_LIFETIME else TOKEN_LIFETIME * 7)
+
         return Jwts.builder()
             .signWith(SECRET)
             .subject(userDetails.username)
-            .expiration(Date(System.currentTimeMillis() + TOKEN_LIFETIME))
-            .issuedAt(Date())
+            .expiration(expiration)
+            .issuedAt(now)
             .compact()
     }
 }

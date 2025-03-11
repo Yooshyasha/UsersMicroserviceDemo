@@ -1,9 +1,6 @@
 package com.yooshyasha.usersmicroservicedemo.controller
 
-import com.yooshyasha.usersmicroservicedemo.dto.controllers.RequestLogin
-import com.yooshyasha.usersmicroservicedemo.dto.controllers.RequestRegister
-import com.yooshyasha.usersmicroservicedemo.dto.controllers.ResponseLogin
-import com.yooshyasha.usersmicroservicedemo.dto.controllers.ResponseRegister
+import com.yooshyasha.usersmicroservicedemo.dto.controllers.*
 import com.yooshyasha.usersmicroservicedemo.services.AuthService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,15 +14,40 @@ class AuthController(
 ) {
     @PostMapping("/login")
     fun login(loginData: RequestLogin): ResponseEntity<ResponseLogin> {
-        val result = authService.login(loginData.username, loginData.password)
+        val loginResult = authService.login(loginData.username, loginData.password)
+        val refreshToken = authService.generateRefreshToken(loginResult)
 
-        return ResponseEntity.ok(ResponseLogin(loginData.username, result))
+        val result = ResponseLogin(
+            loginData.username,
+            loginResult,
+            refreshToken
+        )
+
+        return ResponseEntity.ok(result)
     }
 
     @PostMapping("/register")
     fun register(registerData: RequestRegister): ResponseEntity<ResponseRegister> {
-        val result = authService.register(registerData.username, registerData.password)
+        val registerResult = authService.register(registerData.username, registerData.password)
+        val refreshToken = authService.generateRefreshToken(registerResult)
 
-        return ResponseEntity.ok(ResponseRegister(registerData.username, result))
+        val result = ResponseRegister(
+            registerData.username,
+            registerResult,
+            refreshToken
+        )
+
+        return ResponseEntity.ok(result)
+    }
+
+    @PostMapping("/refresh")
+    fun refresh(refreshData: RequestRefresh): ResponseEntity<ResponseRefresh> {
+        val refreshResult = authService.loginWithRefreshToken(refreshData.refreshToken)
+
+        val result = ResponseRefresh(
+            refreshResult
+        )
+
+        return ResponseEntity.ok(result)
     }
 }
