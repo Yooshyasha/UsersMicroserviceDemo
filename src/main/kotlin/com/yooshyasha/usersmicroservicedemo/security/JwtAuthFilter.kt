@@ -1,6 +1,6 @@
 package com.yooshyasha.usersmicroservicedemo.security
 
-import com.yooshyasha.usersmicroservicedemo.services.UserService
+import com.yooshyasha.usersmicroservicedemo.repos.UserRepo
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource
@@ -10,7 +10,7 @@ import org.springframework.web.filter.OncePerRequestFilter
 @Component
 class JwtAuthFilter(
     private val jwtUtil: JwtUtil,
-    private val userService: UserService,
+    private val userRepo: UserRepo,
 ) : OncePerRequestFilter() {
     override fun doFilterInternal(
         request: jakarta.servlet.http.HttpServletRequest,
@@ -29,7 +29,7 @@ class JwtAuthFilter(
             val username = jwtUtil.extractUsernameFromToken(token)
                 ?: return filterChain.doFilter(request, response)
 
-            val user = userService.getUserByUsername(username)
+            val user = userRepo.findByUserName(username)
                 ?: return filterChain.doFilter(request, response)
 
             if (jwtUtil.verifyToken(token, user)) {

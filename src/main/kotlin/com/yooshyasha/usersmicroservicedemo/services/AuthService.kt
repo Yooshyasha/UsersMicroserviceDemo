@@ -1,6 +1,7 @@
 package com.yooshyasha.usersmicroservicedemo.services
 
 import com.yooshyasha.usersmicroservicedemo.entities.User
+import com.yooshyasha.usersmicroservicedemo.repos.UserRepo
 import com.yooshyasha.usersmicroservicedemo.security.JwtUtil
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -11,6 +12,7 @@ import javax.naming.AuthenticationException
 class AuthService(
     private val jwtUtil: JwtUtil,
     private val userService: UserService,
+    private val userRepo: UserRepo,
     private val passwordEncoder: BCryptPasswordEncoder,
 ) {
     fun login(username: String, password: String): String {
@@ -18,7 +20,7 @@ class AuthService(
             throw UsernameNotFoundException("Username $username not found")
         }
 
-        val user = userService.getUserByUsername(username)
+        val user = userRepo.findByUserName(username)
 
         if (!passwordEncoder.matches(password, user!!.password)) {
             throw AuthenticationException("Wrong password")
@@ -43,7 +45,7 @@ class AuthService(
 
     fun loginWithRefreshToken(token: String): String {
         val username = jwtUtil.extractUsernameFromToken(token)
-        val user = userService.getUserByUsername(username!!)
+        val user = userRepo.findByUserName(username!!)
             ?: throw UsernameNotFoundException("Username $username not found")
 
         return jwtUtil.generateToken(user)
@@ -51,7 +53,7 @@ class AuthService(
 
     fun generateRefreshToken(token: String): String {
         val username = jwtUtil.extractUsernameFromToken(token)
-        val user = userService.getUserByUsername(username!!)
+        val user = userRepo.findByUserName(username!!)
             ?: throw UsernameNotFoundException("Username $username not found")
 
         return jwtUtil.generateToken(user, true)
